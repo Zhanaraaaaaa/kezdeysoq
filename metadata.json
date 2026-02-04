@@ -1,0 +1,7 @@
+{
+  "name": "Smart Classroom Randomizer",
+  "description": "Оқушылар тізімін суретке түсіріп, тақтаға шығатын оқушыны кездейсоқ таңдайтын қосымша.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
