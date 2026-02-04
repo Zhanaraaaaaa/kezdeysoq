@@ -11,6 +11,7 @@ const App: React.FC = () => {
   const [selectedStudent, setSelectedStudent] = useState<DetectedStudent | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [copyStatus, setCopyStatus] = useState<string | null>(null);
 
   const handleStartScan = () => {
     setState(AppState.SCANNING);
@@ -43,6 +44,7 @@ const App: React.FC = () => {
   const handleFinishPicking = (student: DetectedStudent) => {
     setSelectedStudent(student);
     setState(AppState.RESULT);
+    setCopyStatus(null);
   };
 
   const reset = () => {
@@ -51,6 +53,24 @@ const App: React.FC = () => {
     setSelectedStudent(null);
     setCapturedImage(null);
     setError(null);
+    setCopyStatus(null);
+  };
+
+  const publicationText = selectedStudent
+    ? `✨ Бүгінгі таңдауда ${selectedStudent.name} оқушысы таңдалды!\n\nҚұттықтаймыз! Жауап беруге дайын болыңыз.`
+    : '';
+
+  const handleCopyPublication = async () => {
+    if (!publicationText) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(publicationText);
+      setCopyStatus('Публикация мәтіні көшірілді!');
+    } catch (copyError) {
+      setCopyStatus('Көшіру мүмкін болмады. Қайта көріңіз.');
+    }
   };
 
   return (
@@ -175,6 +195,29 @@ const App: React.FC = () => {
               <button onClick={reset} className="px-8 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-50 transition-all">
                 Жаңа сурет
               </button>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left shadow-lg space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-800">Публикация мәтіні</h3>
+                  <p className="text-sm text-slate-500">Бір шертіп көшіруге дайын хабарлама.</p>
+                </div>
+                <button
+                  onClick={handleCopyPublication}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold text-sm"
+                >
+                  Көшіру
+                </button>
+              </div>
+              <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-slate-700 whitespace-pre-line text-sm">
+                {publicationText}
+              </div>
+              {copyStatus && (
+                <div className="text-sm text-emerald-600 font-medium">
+                  {copyStatus}
+                </div>
+              )}
             </div>
           </div>
         )}
